@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  # Frontend React App
+  frontend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: stock-app-frontend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+    networks:
+      - stock-app-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+
+  # Backend API
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: stock-app-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_HOST=stock-app-postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=stock_app_user
+      - DATABASE_PASSWORD=stock_app_password
+      - DATABASE_NAME=stock_trading_app
+      - DATABASE_URL=postgresql://stock_app_user:stock_app_password@stock-app-postgres:5432/stock_trading_app
+      - REDIS_HOST=stock-app-redis
+      - REDIS_PORT=6379
+      - REDIS_URL=redis://stock-app-redis:6379
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-this-in-production-67890
+      - JWT_EXPIRE=15m
+      - JWT_REFRESH_EXPIRE=7d
+      - SESSION_SECRET=your-super-secret-session-key-change-this-in-production-98765
+      - SESSION_MAX_AGE=86400000
+      - FRONTEND_URL=http://localhost:3001
+      - CORS_ORIGINS=http://localhost:3001,http://localhost:5173
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - stock-app-network
+    volumes:
+      - ./Backend/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: stock-app-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: stock_trading_app
+      POSTGRES_USER: stock_app_user
+      POSTGRES_PASSWORD: stock_app_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./Backend/sql/init:/docker-entrypoint-initdb.d
+    networks:
+      - stock-app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stock_app_user -d stock_trading_app"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: stock-app-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - stock-app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  stock-app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

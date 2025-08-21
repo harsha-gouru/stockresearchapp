@@ -1,0 +1,175 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+*.local
+.cache/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+*.env
+
+# Backend specific
+Backend/.env
+Backend/.env.*
+Backend/dist/
+Backend/build/
+Backend/logs/
+Backend/*.log
+Backend/node_modules/
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+postgres_data/
+redis_data/
+
+# Testing
+coverage/
+*.lcov
+.nyc_output/
+test-results/
+
+# Docker
+docker-compose.override.yml
+.dockerignore.local
+
+# iOS/Xcode (if converting to native app later)
+ios/build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Log files
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Package manager files
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# TypeScript
+*.tsbuildinfo
+
+# Production secrets
+secrets/
+credentials/
+*.pem
+*.key
+*.crt
+
+# Generated files
+.eslintcache
+.parcel-cache/
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+Session.vim
+.netrwhist
+tags
+
+# Project specific
+screenshots/*.png.backup
+Backend/docker-compose.local.yml
+test-data/
+mock-data/
+*.backup
+*.old
+
+# Sensitive information
+auth.json
+config.json
+firebase-config.json
+google-services.json
+
+# Build artifacts
+*.map
+bundle.js
+bundle.css
