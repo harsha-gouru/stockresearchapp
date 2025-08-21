@@ -173,3 +173,4 @@ google-services.json
 *.map
 bundle.js
 bundle.css
+node_modules
