@@ -1,0 +1,38 @@
+version: 1
+name: backend-implementation-plan
+order:
+  - 00_overall_goals.prompt.md
+  - 01_auth_service.prompt.md
+  - 02_portfolio_service.prompt.md
+  - 03_market_data.prompt.md
+  - 04_alerts.prompt.md
+  - 05_notifications.prompt.md
+  - 06_websocket.prompt.md
+  - 07_ai_service.prompt.md
+  - 08_watchlist.prompt.md
+  - 09_db_migrations.prompt.md
+  - 10_tests_backend.prompt.md
+  - 11_docs_update.prompt.md
+dependencies:
+  02_portfolio_service.prompt.md:
+    - 01_auth_service.prompt.md
+  04_alerts.prompt.md:
+    - 03_market_data.prompt.md
+  05_notifications.prompt.md:
+    - 04_alerts.prompt.md
+  06_websocket.prompt.md:
+    - 03_market_data.prompt.md
+  07_ai_service.prompt.md:
+    - 03_market_data.prompt.md
+acceptance_criteria:
+  default:
+    - All tests pass (frontend Vitest, backend Jest)
+    - Lint passes with no new errors
+    - New endpoints documented in README/WARP
+    - No hardcoded secrets; env-driven config
+verification:
+  lint_frontend: "npm run lint"
+  lint_backend: "(cd Backend && npm run lint)"
+  test_frontend: "npm run test:coverage"
+  test_backend: "(cd Backend && npm run test)"
+
