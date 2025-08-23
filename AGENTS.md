@@ -11,6 +11,91 @@ Quick links
 - prompts/plan.yaml – execution order and dependencies
 - prompts/* – task prompts for Auth, Portfolio, Market Data, Alerts, Notifications, WebSocket, AI, Watchlist, DB, Tests, Docs
 
+Using “OpenAI Codex online” today
+- OpenAI Codex has been sunset. To achieve the same outcome, use ChatGPT (GPT‑4/4o family) with GitHub repo access, or GitHub Copilot Chat in VS Code, or open‑source coder models via Ollama.
+- The prompts/ runbook in this repo is designed to guide any of these models to make safe, incremental changes with tests and documentation.
+
+How to link your GitHub repo to an agent
+1) ChatGPT (GPT‑4/4o)
+   - In ChatGPT (web), link your GitHub account and grant access to harsha-gouru/stockresearchapp.
+   - Start a new chat and attach/select the repository (if your plan supports it), or paste the repo URL.
+2) GitHub Copilot Chat (VS Code)
+   - Install “GitHub Copilot” and “GitHub Copilot Chat”, sign in to GitHub, and open this repo folder locally.
+3) Open‑source via Ollama
+   - Use the scripts in AGENTS.md (below) or prompts/README.quick-start.md to feed prompt files to a local model.
+
+Copy‑paste prompt templates (Codex‑style)
+
+1) Bootstrap prompt (ChatGPT with repo access)
+```text path=null start=null
+Act as a senior full‑stack engineer working in the repository harsha-gouru/stockresearchapp (branch: main).
+Follow the repo’s runbook in prompts/plan.yaml.
+Rules:
+- Output a JSON plan first (files to read, changes to make, tests to add, verification commands).
+- Then produce minimal unified diffs per file, one file at a time.
+- Add or update tests (Jest/Supertest for Backend; Vitest for frontend when applicable).
+- Use environment variables (no secrets inline). Update docs (README/WARP) if public APIs change.
+- Finish with a conventional commit message.
+Context files to read first: WARP.md, ARCHITECTURE.md, prompts/plan.yaml, prompts/01_auth_service.prompt.md, Backend/src/routes/auth.ts, Backend/src/services/AuthService.ts.
+Goal: Implement the MVP auth flow described in prompts/01_auth_service.prompt.md and open a PR.
+```
+
+2) JSON plan request (use this right after the bootstrap)
+```text path=null start=null
+Before changing any code, output only a JSON object with keys: read, changes, tests, verify.
+Example shape:
+{
+  "read": ["Backend/src/routes/auth.ts", "Backend/src/services/AuthService.ts"],
+  "changes": [
+    { "file": "Backend/src/services/AuthService.ts", "reason": "Add refresh token rotation and email verification handling" },
+    { "file": "Backend/src/routes/auth.ts", "reason": "Wire endpoints and validation" }
+  ],
+  "tests": [
+    "Backend/tests/auth.login.test.ts",
+    "Backend/tests/auth.refresh.test.ts",
+    "Backend/tests/auth.reset-password.test.ts"
+  ],
+  "verify": [
+    "(cd Backend && npm run lint)",
+    "(cd Backend && npm run test)"
+  ]
+}
+Return only JSON.
+```
+
+3) Diff‑only request (apply per file)
+```text path=null start=null
+Now provide a unified diff for Backend/src/services/AuthService.ts only.
+Constraints:
+- Minimal, atomic change
+- Preserve existing user edits
+- No secrets; use env vars
+- Include robust error handling and input validation
+Return only the diff.
+```
+
+4) Verification block request
+```text path=null start=null
+Provide a verification block listing exact commands to lint and test this change locally, and the expected outcomes (e.g., which tests should pass). Return a short, copy‑pasteable block.
+```
+
+5) Commit message request
+```text path=null start=null
+Provide a conventional commit message summarizing the change, scope, and tests.
+Format: <type>(scope): <summary>\n\n<body>\n\n<tests>
+```
+
+6) PR request (if the tool can open a PR)
+```text path=null start=null
+Open a pull request titled: feat(auth): complete MVP auth (register/login/refresh/reset/verify)
+Include a summary of changes, tests added, and verification steps.
+```
+
+Notes and limitations
+- If the AI cannot access the repo directly, paste the relevant file snippets the model asks for (keep diffs small).
+- Avoid sharing secrets. Use placeholders like {{OPENAI_API_KEY}} or configure repo secrets for CI.
+- For large changes, iterate: JSON plan → single‑file diff → verify → repeat.
+
 1) Choose a model provider
 
 A. OpenAI (recommended for fastest results)
